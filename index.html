@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ps" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حجره — خپله خبره دلته اوره</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&family=Noto+Naskh+Arabic:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body dir="rtl" lang="ps">
+
+<!-- ================= اوریدل شوی جالي بېکراونډ ================= -->
+<div class="jali-overlay" aria-hidden="true"></div>
+
+<!-- ================= د ننوتلو پاڼه ================= -->
+<section id="authView" class="auth-screen">
+  <div class="auth-card">
+    <div class="brand">
+      <div class="lantern-mark">
+        <svg viewBox="0 0 48 64" class="lantern-svg" aria-hidden="true">
+          <path d="M24 2 L30 10 L18 10 Z" class="l-top"/>
+          <rect x="14" y="10" width="20" height="6" rx="1" class="l-ring"/>
+          <path d="M16 16 Q24 12 32 16 L30 46 Q24 50 18 46 Z" class="l-body"/>
+          <rect x="14" y="46" width="20" height="6" rx="1" class="l-ring"/>
+          <path d="M24 52 L24 62" class="l-tail" stroke-linecap="round"/>
+          <circle cx="24" cy="30" r="6" class="l-flame"/>
+        </svg>
+      </div>
+      <h1 class="brand-name">حجره</h1>
+      <p class="brand-tagline">هرچا خبره، یوه حجره</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="login">ننوتل</button>
+      <button class="tab-btn" data-tab="signup">نوی حساب</button>
+    </div>
+
+    <!-- ننوتل -->
+    <form id="loginForm" class="auth-form active" autocomplete="off">
+      <label>بریښنالیک
+        <input type="email" id="loginEmail" placeholder="you@gmail.com" required>
+      </label>
+      <label>پټنوم
+        <input type="password" id="loginPassword" placeholder="••••••••" required minlength="4">
+      </label>
+      <p class="form-error" id="loginError"></p>
+      <button type="submit" class="btn-primary">ننوځه</button>
+    </form>
+
+    <!-- نوی حساب -->
+    <form id="signupForm" class="auth-form" autocomplete="off">
+      <label>نوم
+        <input type="text" id="signupName" placeholder="ستاسو نوم" required>
+      </label>
+      <label>بریښنالیک (جیمیل)
+        <input type="email" id="signupEmail" placeholder="you@gmail.com" required>
+      </label>
+      <label>پټنوم جوړ کړئ
+        <input type="password" id="signupPassword" placeholder="لږ تر لږه ۴ توري" required minlength="4">
+      </label>
+      <p class="form-error" id="signupError"></p>
+      <button type="submit" class="btn-primary">حساب جوړ کړئ</button>
+    </form>
+
+    <div class="divider"><span>یا</span></div>
+
+    <div id="googleBtnHolder" class="google-holder"></div>
+    <p class="google-hint">د جیمیل سره ننوتل یوازې هغه وخت کار کوي چې پروژه خپل Google Client ID ولري — کتنه: README.md</p>
+  </div>
+</section>
+
+<!-- ================= اصلي فيډ پاڼه ================= -->
+<section id="feedView" class="feed-screen hidden">
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="topbar-brand">
+        <svg viewBox="0 0 48 64" class="lantern-svg small" aria-hidden="true">
+          <path d="M24 2 L30 10 L18 10 Z" class="l-top"/>
+          <rect x="14" y="10" width="20" height="6" rx="1" class="l-ring"/>
+          <path d="M16 16 Q24 12 32 16 L30 46 Q24 50 18 46 Z" class="l-body"/>
+          <rect x="14" y="46" width="20" height="6" rx="1" class="l-ring"/>
+          <circle cx="24" cy="30" r="6" class="l-flame"/>
+        </svg>
+        <span>حجره</span>
+      </div>
+      <nav class="topbar-nav">
+        <button id="navFeedBtn" class="nav-btn active">فيډ</button>
+        <button id="navProfileBtn" class="nav-btn">زما پاڼه</button>
+      </nav>
+      <div class="topbar-user">
+        <span id="topUserName"></span>
+        <button id="logoutBtn" class="btn-ghost">وتل</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="feed-main">
+
+    <!-- د پوسټ لیکلو کارت -->
+    <div class="composer-card" id="composerCard">
+      <div class="composer-head">
+        <div class="avatar" id="composerAvatar"></div>
+        <textarea id="postText" placeholder="خپل نظر دلته ولیکئ..." rows="2"></textarea>
+      </div>
+      <div id="imagePreviewWrap" class="image-preview-wrap hidden">
+        <img id="imagePreview" alt="">
+        <button id="removeImageBtn" class="remove-img-btn" title="لرې کول">✕</button>
+      </div>
+      <div class="composer-foot">
+        <label class="attach-btn">
+          🖼 عکس ور زیات کړئ
+          <input type="file" id="imageInput" accept="image/*" hidden>
+        </label>
+        <button id="submitPostBtn" class="btn-primary small">خپور کول</button>
+      </div>
+    </div>
+
+    <div class="lattice-divider" aria-hidden="true"></div>
+
+    <!-- فيډ لست -->
+    <div id="feedList" class="feed-list"></div>
+    <p id="emptyFeedMsg" class="empty-msg hidden">تر اوسه هېڅ نظر نشته — لومړی خبره تاسو ولیکئ!</p>
+  </main>
+</section>
+
+<!-- ================= پروفایل پاڼه ================= -->
+<section id="profileView" class="feed-screen hidden">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="topbar-brand">
+        <svg viewBox="0 0 48 64" class="lantern-svg small" aria-hidden="true">
+          <path d="M24 2 L30 10 L18 10 Z" class="l-top"/>
+          <rect x="14" y="10" width="20" height="6" rx="1" class="l-ring"/>
+          <path d="M16 16 Q24 12 32 16 L30 46 Q24 50 18 46 Z" class="l-body"/>
+          <rect x="14" y="46" width="20" height="6" rx="1" class="l-ring"/>
+          <circle cx="24" cy="30" r="6" class="l-flame"/>
+        </svg>
+        <span>حجره</span>
+      </div>
+      <nav class="topbar-nav">
+        <button id="navFeedBtn2" class="nav-btn">فيډ</button>
+        <button id="navProfileBtn2" class="nav-btn active">زما پاڼه</button>
+      </nav>
+      <div class="topbar-user">
+        <span id="topUserName2"></span>
+        <button id="logoutBtn2" class="btn-ghost">وتل</button>
+      </div>
+    </div>
+  </header>
+  <main class="feed-main">
+    <div class="profile-header">
+      <div class="avatar big" id="profileAvatar"></div>
+      <h2 id="profileName"></h2>
+      <p id="profileEmail" class="muted"></p>
+    </div>
+    <div class="lattice-divider" aria-hidden="true"></div>
+    <div id="profileList" class="feed-list"></div>
+    <p id="emptyProfileMsg" class="empty-msg hidden">تاسو تر اوسه هېڅ نظر نه دی خپور کړی.</p>
+  </main>
+</section>
+
+<script src="google-auth-config.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
