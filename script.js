@@ -1325,4 +1325,3 @@ initGoogleButton();
 
 boot();
 
-startAutoRefresh();
