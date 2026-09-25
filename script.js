@@ -1151,64 +1151,71 @@ async function renderFeed() {
    RENDER PROFILE
    ========================================================= */
 
+/* =========================================================
+   RENDER PROFILE
+   ========================================================= */
+
 async function renderProfile() {
 
-  const email =
-    getSession();
+  const email = getSession();
 
-
-  const user =
-    findUser(email);
-
+  const user = findUser(email);
 
   if (!user) {
-
     showAuth();
-
     return;
   }
 
+  /* Get profile from Supabase */
 
-  $("topUserName2")
-    .textContent =
-    user.name;
+  const {
+    data: profile,
+    error
+  } = await db
+    .from("profiles")
+    .select("*")
+    .eq("email", email)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Profile loading error:", error);
+  }
+
+  /* Use Supabase profile if available */
+
+  const profileData = profile || {
+    name: user.name,
+    email: user.email
+  };
+
+  $("topUserName2").textContent =
+    profileData.name || user.name;
+
+  $("profileAvatar").textContent =
+    initials(profileData.name || user.name);
+
+  $("profileName").textContent =
+    profileData.name || user.name;
+
+  $("profileEmail").textContent =
+    profileData.email || user.email;
 
 
-  $("profileAvatar")
-    .textContent =
-    initials(
-      user.name
-    );
+  /* Load user's posts */
 
-
-  $("profileName")
-    .textContent =
-    user.name;
-
-
-  $("profileEmail")
-    .textContent =
-    user.email;
-
-
-  const listEl =
-    $("profileList");
-
+  const listEl = $("profileList");
 
   listEl.innerHTML =
     `<p class="empty-msg">پوسټونه لوډ کېږي...</p>`;
 
+  const allPosts = await getPosts();
 
-  const allPosts =
-    await getPosts();
-
-
-  const posts =
-    allPosts.filter(
-      post =>
-        post.email.toLowerCase() ===
-        email.toLowerCase()
-    );
+  const posts = allPosts.filter(
+    post =>
+      post.email &&
+      post.email.toLowerCase() ===
+      email.toLowerCase()
+  );
 
 
   if (posts.length === 0) {
@@ -1238,12 +1245,8 @@ async function renderProfile() {
     );
 
 
-  attachLikeHandlers(
-    listEl
-  );
+  attachLikeHandlers(listEl);
 }
-
-
 /* =========================================================
    AUTO REFRESH
    ========================================================= */
