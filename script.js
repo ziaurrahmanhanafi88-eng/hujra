@@ -1430,6 +1430,7 @@ async function renderProfile() {
 
 
   attachLikeHandlers(listEl);
+   attachEditHandlers(listEl);
 }
 /* =========================================================
    AUTO REFRESH
