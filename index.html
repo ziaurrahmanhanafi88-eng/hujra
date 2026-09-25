@@ -1,227 +1,915 @@
 <!DOCTYPE html>
 <html lang="ps" dir="rtl">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>حجره — خپله خبره دلته اوره</title>
-<link rel="icon" href="data:,">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&family=Noto+Naskh+Arabic:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>حجره — خپله خبره دلته اوره</title>
+
+  <link
+    rel="icon"
+    href="data:,"
+  >
+
+  <!-- Fonts -->
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&family=Noto+Naskh+Arabic:wght@400;500;700&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  >
+
+  <!-- Main CSS -->
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+
+  <!-- Google Identity -->
+  <script
+    src="https://accounts.google.com/gsi/client"
+    async
+    defer
+  ></script>
+
 </head>
-<body dir="rtl" lang="ps">
 
-<!-- ================= اوریدل شوی جالي بېکراونډ ================= -->
-<div class="jali-overlay" aria-hidden="true"></div>
 
-<!-- ================= د ننوتلو پاڼه ================= -->
-<section id="authView" class="auth-screen">
+<body
+  dir="rtl"
+  lang="ps"
+>
+
+
+<!-- =====================================================
+     JALI BACKGROUND
+     ===================================================== -->
+
+<div
+  class="jali-overlay"
+  aria-hidden="true"
+></div>
+
+
+
+<!-- =====================================================
+     AUTH VIEW
+     LOGIN / SIGNUP
+     ===================================================== -->
+
+<section
+  id="authView"
+  class="auth-screen"
+>
+
   <div class="auth-card">
+
+
+    <!-- BRAND -->
+
     <div class="brand">
+
       <div class="lantern-mark">
-        <svg viewBox="0 0 48 64" class="lantern-svg" aria-hidden="true">
-          <path d="M24 2 L30 10 L18 10 Z" class="l-top"/>
-          <rect x="14" y="10" width="20" height="6" rx="1" class="l-ring"/>
-          <path d="M16 16 Q24 12 32 16 L30 46 Q24 50 18 46 Z" class="l-body"/>
-          <rect x="14" y="46" width="20" height="6" rx="1" class="l-ring"/>
-          <path d="M24 52 L24 62" class="l-tail" stroke-linecap="round"/>
-          <circle cx="24" cy="30" r="6" class="l-flame"/>
+
+        <svg
+          viewBox="0 0 48 64"
+          class="lantern-svg"
+          aria-hidden="true"
+        >
+
+          <path
+            d="M24 2 L30 10 L18 10 Z"
+            class="l-top"
+          />
+
+          <rect
+            x="14"
+            y="10"
+            width="20"
+            height="6"
+            rx="1"
+            class="l-ring"
+          />
+
+          <path
+            d="M16 16 Q24 12 32 16 L30 46 Q24 50 18 46 Z"
+            class="l-body"
+          />
+
+          <rect
+            x="14"
+            y="46"
+            width="20"
+            height="6"
+            rx="1"
+            class="l-ring"
+          />
+
+          <path
+            d="M24 52 L24 62"
+            class="l-tail"
+            stroke-linecap="round"
+          />
+
+          <circle
+            cx="24"
+            cy="30"
+            r="6"
+            class="l-flame"
+          />
+
         </svg>
+
       </div>
-      <h1 class="brand-name">حجره</h1>
-      <p class="brand-tagline">هرچا خبره، یوه حجره</p>
+
+
+      <h1 class="brand-name">
+        حجره
+      </h1>
+
+
+      <p class="brand-tagline">
+        هرچا خبره، یوه حجره
+      </p>
+
     </div>
+
+
+
+    <!-- AUTH TABS -->
 
     <div class="tabs">
-      <button class="tab-btn active" data-tab="login">ننوتل</button>
-      <button class="tab-btn" data-tab="signup">نوی حساب</button>
+
+      <button
+        class="tab-btn active"
+        data-tab="login"
+        type="button"
+      >
+        ننوتل
+      </button>
+
+      <button
+        class="tab-btn"
+        data-tab="signup"
+        type="button"
+      >
+        نوی حساب
+      </button>
+
     </div>
 
-    <!-- ننوتل -->
-    <form id="loginForm" class="auth-form active" autocomplete="off">
-      <label>بریښنالیک
-        <input type="email" id="loginEmail" placeholder="you@gmail.com" required>
+
+
+    <!-- =================================================
+         LOGIN
+         ================================================= -->
+
+    <form
+      id="loginForm"
+      class="auth-form active"
+      autocomplete="off"
+    >
+
+      <label>
+        بریښنالیک
+
+        <input
+          type="email"
+          id="loginEmail"
+          placeholder="you@gmail.com"
+          required
+        >
+
       </label>
-      <label>پټنوم
-        <input type="password" id="loginPassword" placeholder="••••••••" required minlength="4">
+
+
+      <label>
+        پټنوم
+
+        <input
+          type="password"
+          id="loginPassword"
+          placeholder="••••••••"
+          required
+          minlength="4"
+        >
+
       </label>
-      <p class="form-error" id="loginError"></p>
-      <button type="submit" class="btn-primary">ننوځه</button>
+
+
+      <p
+        class="form-error"
+        id="loginError"
+      ></p>
+
+
+      <button
+        type="submit"
+        class="btn-primary"
+      >
+        ننوځه
+      </button>
+
     </form>
 
-    <!-- نوی حساب -->
-    <form id="signupForm" class="auth-form" autocomplete="off">
-      <label>نوم
-        <input type="text" id="signupName" placeholder="ستاسو نوم" required>
+
+
+    <!-- =================================================
+         SIGN UP
+         ================================================= -->
+
+    <form
+      id="signupForm"
+      class="auth-form"
+      autocomplete="off"
+    >
+
+      <label>
+        نوم
+
+        <input
+          type="text"
+          id="signupName"
+          placeholder="ستاسو نوم"
+          required
+        >
+
       </label>
-      <label>بریښنالیک (جیمیل)
-        <input type="email" id="signupEmail" placeholder="you@gmail.com" required>
+
+
+      <label>
+        بریښنالیک (جیمیل)
+
+        <input
+          type="email"
+          id="signupEmail"
+          placeholder="you@gmail.com"
+          required
+        >
+
       </label>
-      <label>پټنوم جوړ کړئ
-        <input type="password" id="signupPassword" placeholder="لږ تر لږه ۴ توري" required minlength="4">
+
+
+      <label>
+        پټنوم جوړ کړئ
+
+        <input
+          type="password"
+          id="signupPassword"
+          placeholder="لږ تر لږه ۴ توري"
+          required
+          minlength="4"
+        >
+
       </label>
-      <p class="form-error" id="signupError"></p>
-      <button type="submit" class="btn-primary">حساب جوړ کړئ</button>
+
+
+      <p
+        class="form-error"
+        id="signupError"
+      ></p>
+
+
+      <button
+        type="submit"
+        class="btn-primary"
+      >
+        حساب جوړ کړئ
+      </button>
+
     </form>
 
-    <div class="divider"><span>یا</span></div>
 
-    <div id="googleBtnHolder" class="google-holder"></div>
-    <p class="google-hint">د جیمیل سره ننوتل یوازې هغه وخت کار کوي چې پروژه خپل Google Client ID ولري — کتنه: README.md</p>
+
+    <!-- DIVIDER -->
+
+    <div class="divider">
+      <span>یا</span>
+    </div>
+
+
+
+    <!-- GOOGLE LOGIN -->
+
+    <div
+      id="googleBtnHolder"
+      class="google-holder"
+    ></div>
+
+
+    <p class="google-hint">
+      د جیمیل سره ننوتل یوازې هغه وخت کار کوي چې پروژه خپل Google Client ID ولري — کتنه: README.md
+    </p>
+
   </div>
+
 </section>
 
-<!-- ================= اصلي فيډ پاڼه ================= -->
-<section id="feedView" class="feed-screen hidden">
+
+
+<!-- =====================================================
+     FEED VIEW
+     ===================================================== -->
+
+<section
+  id="feedView"
+  class="feed-screen hidden"
+>
+
+
+  <!-- ===================================================
+       TOPBAR
+       =================================================== -->
 
   <header class="topbar">
+
     <div class="topbar-inner">
+
+
+      <!-- BRAND -->
+
       <div class="topbar-brand">
-        <svg viewBox="0 0 48 64" class="lantern-svg small" aria-hidden="true">
-          <path d="M24 2 L30 10 L18 10 Z" class="l-top"/>
-          <rect x="14" y="10" width="20" height="6" rx="1" class="l-ring"/>
-          <path d="M16 16 Q24 12 32 16 L30 46 Q24 50 18 46 Z" class="l-body"/>
-          <rect x="14" y="46" width="20" height="6" rx="1" class="l-ring"/>
-          <circle cx="24" cy="30" r="6" class="l-flame"/>
+
+        <svg
+          viewBox="0 0 48 64"
+          class="lantern-svg small"
+          aria-hidden="true"
+        >
+
+          <path
+            d="M24 2 L30 10 L18 10 Z"
+            class="l-top"
+          />
+
+          <rect
+            x="14"
+            y="10"
+            width="20"
+            height="6"
+            rx="1"
+            class="l-ring"
+          />
+
+          <path
+            d="M16 16 Q24 12 32 16 L30 46 Q24 50 18 46 Z"
+            class="l-body"
+          />
+
+          <rect
+            x="14"
+            y="46"
+            width="20"
+            height="6"
+            rx="1"
+            class="l-ring"
+          />
+
+          <circle
+            cx="24"
+            cy="30"
+            r="6"
+            class="l-flame"
+          />
+
         </svg>
-        <span>حجره</span>
+
+
+        <span>
+          حجره
+        </span>
+
       </div>
+
+
+
+      <!-- NAVIGATION -->
+
       <nav class="topbar-nav">
-        <button id="navFeedBtn" class="nav-btn active">فيډ</button>
-        <button id="navProfileBtn" class="nav-btn">زما پاڼه</button>
+
+        <button
+          id="navFeedBtn"
+          class="nav-btn active"
+          type="button"
+        >
+          فيډ
+        </button>
+
+
+        <button
+          id="navProfileBtn"
+          class="nav-btn"
+          type="button"
+        >
+          زما پاڼه
+        </button>
+
       </nav>
+
+
+
+      <!-- USER -->
+
       <div class="topbar-user">
+
         <span id="topUserName"></span>
-        <button id="logoutBtn" class="btn-ghost">وتل</button>
+
+
+        <button
+          id="logoutBtn"
+          class="btn-ghost"
+          type="button"
+        >
+          وتل
+        </button>
+
       </div>
+
     </div>
+
   </header>
+
+
+
+  <!-- ===================================================
+       MAIN FEED
+       =================================================== -->
 
   <main class="feed-main">
 
-    <!-- د پوسټ لیکلو کارت -->
-    <div class="composer-card" id="composerCard">
+
+
+    <!-- =================================================
+         HUJRA POST COMPOSER
+         ================================================= -->
+
+    <section
+      class="composer-card"
+      id="composerCard"
+    >
+
+
+      <!-- Composer Header -->
+
       <div class="composer-head">
-        <div class="avatar" id="composerAvatar"></div>
-        <textarea id="postText" placeholder="خپل نظر دلته ولیکئ..." rows="2"></textarea>
+
+
+        <!-- User Avatar -->
+
+        <div
+          class="avatar"
+          id="composerAvatar"
+        ></div>
+
+
+        <!-- Post Text -->
+
+        <textarea
+          id="postText"
+          placeholder="خپله خبره دلته ولیکئ..."
+          rows="3"
+          maxlength="5000"
+        ></textarea>
+
       </div>
-      <div id="imagePreviewWrap" class="image-preview-wrap hidden">
-        <img id="imagePreview" alt="">
-        <button id="removeImageBtn" class="remove-img-btn" title="لرې کول">✕</button>
+
+
+
+      <!-- =================================================
+           IMAGE PREVIEW
+           ================================================= -->
+
+      <div
+        id="imagePreviewWrap"
+        class="image-preview-wrap hidden"
+      >
+
+        <img
+          id="imagePreview"
+          alt="د پوسټ عکس"
+        >
+
+
+        <button
+          id="removeImageBtn"
+          class="remove-img-btn"
+          title="عکس لرې کول"
+          type="button"
+        >
+          ✕
+        </button>
+
       </div>
+
+
+
+      <!-- =================================================
+           COMPOSER FOOTER
+           ================================================= -->
+
       <div class="composer-foot">
+
+
+        <!-- IMAGE BUTTON -->
+
         <label class="attach-btn">
-          🖼 عکس ور زیات کړئ
-          <input type="file" id="imageInput" accept="image/*" hidden>
+
+          🖼
+          عکس ور زیات کړئ
+
+          <input
+            type="file"
+            id="imageInput"
+            accept="image/*"
+            hidden
+          >
+
         </label>
-        <button id="submitPostBtn" class="btn-primary small">خپور کول</button>
+
+
+
+        <!-- POST BUTTON -->
+
+        <button
+          id="submitPostBtn"
+          class="btn-primary small"
+          type="button"
+        >
+          خپرول
+        </button>
+
       </div>
-    </div>
 
-    <div class="lattice-divider" aria-hidden="true"></div>
+    </section>
 
-    <!-- فيډ لست -->
-    <div id="feedList" class="feed-list"></div>
-    <p id="emptyFeedMsg" class="empty-msg hidden">تر اوسه هېڅ نظر نشته — لومړی خبره تاسو ولیکئ!</p>
+
+
+    <!-- DECORATIVE DIVIDER -->
+
+    <div
+      class="lattice-divider"
+      aria-hidden="true"
+    ></div>
+
+
+
+    <!-- =================================================
+         FEED POSTS
+         ================================================= -->
+
+    <div
+      id="feedList"
+      class="feed-list"
+    ></div>
+
+
+    <!-- EMPTY FEED -->
+
+    <p
+      id="emptyFeedMsg"
+      class="empty-msg hidden"
+    >
+      تر اوسه هېڅ خبره نشته، لومړی خپله خبره تاسو ولیکئ!
+    </p>
+
+
   </main>
+
 </section>
 
-<!-- ================= پروفایل پاڼه ================= -->
-<section id="profileView" class="feed-screen hidden">
+
+
+<!-- =====================================================
+     PROFILE VIEW
+     ===================================================== -->
+
+<section
+  id="profileView"
+  class="feed-screen hidden"
+>
+
+
+  <!-- ===================================================
+       PROFILE TOPBAR
+       =================================================== -->
+
   <header class="topbar">
+
     <div class="topbar-inner">
+
+
+      <!-- BRAND -->
+
       <div class="topbar-brand">
-        <svg viewBox="0 0 48 64" class="lantern-svg small" aria-hidden="true">
-          <path d="M24 2 L30 10 L18 10 Z" class="l-top"/>
-          <rect x="14" y="10" width="20" height="6" rx="1" class="l-ring"/>
-          <path d="M16 16 Q24 12 32 16 L30 46 Q24 50 18 46 Z" class="l-body"/>
-          <rect x="14" y="46" width="20" height="6" rx="1" class="l-ring"/>
-          <circle cx="24" cy="30" r="6" class="l-flame"/>
+
+        <svg
+          viewBox="0 0 48 64"
+          class="lantern-svg small"
+          aria-hidden="true"
+        >
+
+          <path
+            d="M24 2 L30 10 L18 10 Z"
+            class="l-top"
+          />
+
+          <rect
+            x="14"
+            y="10"
+            width="20"
+            height="6"
+            rx="1"
+            class="l-ring"
+          />
+
+          <path
+            d="M16 16 Q24 12 32 16 L30 46 Q24 50 18 46 Z"
+            class="l-body"
+          />
+
+          <rect
+            x="14"
+            y="46"
+            width="20"
+            height="6"
+            rx="1"
+            class="l-ring"
+          />
+
+          <circle
+            cx="24"
+            cy="30"
+            r="6"
+            class="l-flame"
+          />
+
         </svg>
-        <span>حجره</span>
+
+
+        <span>
+          حجره
+        </span>
+
       </div>
+
+
+
+      <!-- PROFILE NAV -->
+
       <nav class="topbar-nav">
-        <button id="navFeedBtn2" class="nav-btn">فيډ</button>
-        <button id="navProfileBtn2" class="nav-btn active">زما پاڼه</button>
+
+        <button
+          id="navFeedBtn2"
+          class="nav-btn"
+          type="button"
+        >
+          فيډ
+        </button>
+
+
+        <button
+          id="navProfileBtn2"
+          class="nav-btn active"
+          type="button"
+        >
+          زما پاڼه
+        </button>
+
       </nav>
+
+
+
+      <!-- PROFILE USER -->
+
       <div class="topbar-user">
+
         <span id="topUserName2"></span>
-        <button id="logoutBtn2" class="btn-ghost">وتل</button>
+
+
+        <button
+          id="logoutBtn2"
+          class="btn-ghost"
+          type="button"
+        >
+          وتل
+        </button>
+
       </div>
+
     </div>
+
   </header>
+
+
+
+  <!-- ===================================================
+       PROFILE MAIN
+       =================================================== -->
+
   <main class="feed-main">
-    <div class="profile-header">
 
-  <div class="profile-cover" id="profileCover"></div>
 
-  <div class="profile-main-info">
+    <section class="profile-header">
 
-    <div class="avatar big" id="profileAvatar"></div>
 
-    <div class="profile-text-info">
-      <h2 id="profileName"></h2>
+      <!-- COVER -->
 
-      <p id="profileUsername" class="profile-username"></p>
+      <div
+        class="profile-cover"
+        id="profileCover"
+      ></div>
 
-      <p id="profileBio" class="profile-bio"></p>
 
-      <p id="profileEmail" class="muted"></p>
-    </div>
 
-  </div>
+      <!-- PROFILE MAIN INFO -->
 
-  <div class="profile-details" id="profileDetails">
+      <div class="profile-main-info">
 
-    <div class="profile-detail">
-      <span>📍</span>
-      <span id="profileLocation"></span>
-    </div>
 
-    <div class="profile-detail">
-      <span>💼</span>
-      <span id="profileProfession"></span>
-    </div>
+        <!-- AVATAR -->
 
-    <div class="profile-detail">
-      <span>🎓</span>
-      <span id="profileEducation"></span>
-    </div>
+        <div
+          class="avatar big"
+          id="profileAvatar"
+        ></div>
 
-    <div class="profile-detail">
-      <span>🛠️</span>
-      <span id="profileSkills"></span>
-    </div>
 
-    <div class="profile-detail">
-      <span>❤️</span>
-      <span id="profileInterests"></span>
-    </div>
 
-    <div class="profile-detail">
-      <span>🌐</span>
-      <span id="profileWebsite"></span>
-    </div>
+        <!-- TEXT INFO -->
 
-  </div>
+        <div class="profile-text-info">
 
-    <button
-    type="button"
-    id="editProfileBtn"
-    class="btn-primary"
-    onclick="editProfile()">
-    ✏️ پروفایل سمول
-  </button>
 
-</div>
-    <div class="lattice-divider" aria-hidden="true"></div>
-    <div id="profileList" class="feed-list"></div>
-    <p id="emptyProfileMsg" class="empty-msg hidden">تاسو تر اوسه هېڅ نظر نه دی خپور کړی.</p>
+          <h2 id="profileName"></h2>
+
+
+          <p
+            id="profileUsername"
+            class="profile-username"
+          ></p>
+
+
+          <p
+            id="profileBio"
+            class="profile-bio"
+          ></p>
+
+
+          <p
+            id="profileEmail"
+            class="muted"
+          ></p>
+
+
+        </div>
+
+      </div>
+
+
+
+      <!-- =================================================
+           PROFILE DETAILS
+           ================================================= -->
+
+      <div
+        class="profile-details"
+        id="profileDetails"
+      >
+
+
+        <div class="profile-detail">
+
+          <span>📍</span>
+
+          <span id="profileLocation"></span>
+
+        </div>
+
+
+        <div class="profile-detail">
+
+          <span>💼</span>
+
+          <span id="profileProfession"></span>
+
+        </div>
+
+
+        <div class="profile-detail">
+
+          <span>🎓</span>
+
+          <span id="profileEducation"></span>
+
+        </div>
+
+
+        <div class="profile-detail">
+
+          <span>🛠️</span>
+
+          <span id="profileSkills"></span>
+
+        </div>
+
+
+        <div class="profile-detail">
+
+          <span>❤️</span>
+
+          <span id="profileInterests"></span>
+
+        </div>
+
+
+        <div class="profile-detail">
+
+          <span>🌐</span>
+
+          <span id="profileWebsite"></span>
+
+        </div>
+
+
+      </div>
+
+
+
+      <!-- EDIT PROFILE -->
+
+      <button
+        type="button"
+        id="editProfileBtn"
+        class="btn-primary"
+        onclick="editProfile()"
+      >
+        ✏️ پروفایل سمول
+      </button>
+
+
+    </section>
+
+
+
+    <!-- PROFILE DIVIDER -->
+
+    <div
+      class="lattice-divider"
+      aria-hidden="true"
+    ></div>
+
+
+
+    <!-- USER POSTS -->
+
+    <div
+      id="profileList"
+      class="feed-list"
+    ></div>
+
+
+
+    <!-- EMPTY PROFILE -->
+
+    <p
+      id="emptyProfileMsg"
+      class="empty-msg hidden"
+    >
+      تاسو تر اوسه هېڅ خبره نه ده خپره کړې.
+    </p>
+
+
   </main>
+
 </section>
+
+
+
+<!-- =====================================================
+     SCRIPTS
+     ترتیب مهم دی
+     ===================================================== -->
+
+
+<!-- Google Configuration -->
 <script src="google-auth-config.js"></script>
+
+
+<!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<!-- HUJRA Main JavaScript -->
 <script src="script.js"></script>
+
+
 </body>
 </html>
