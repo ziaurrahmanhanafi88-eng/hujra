@@ -1,1507 +1,2308 @@
 /* =========================================================
-H U J R A  |  Supabase Version
-Shared posts + likes for all users
-========================================================= */
+   H U J R A | Supabase Version
+   Shared posts + likes + profile + edit posts
+   ========================================================= */
 
-/* ---------- SUPABASE ---------- */
 
-const SUPABASE_URL = "https://bfrluzhuxxsudfcybwks.supabase.co";
+/* =========================================================
+   SUPABASE
+   ========================================================= */
+
+const SUPABASE_URL =
+  "https://bfrluzhuxxsudfcybwks.supabase.co";
 
 const SUPABASE_PUBLISHABLE_KEY =
-"sb_publishable_PewlmDXruPH-aT49y8UP_A_sGp39TND";
+  "sb_publishable_PewlmDXruPH-aT49y8UP_A_sGp39TND";
 
 const db = window.supabase.createClient(
-SUPABASE_URL,
-SUPABASE_PUBLISHABLE_KEY
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
 );
 
-/* ---------- LOCAL LOGIN ---------- /
-/
-Login information remains local for now.
-Posts and likes are shared through Supabase.
-*/
+
+/* =========================================================
+   LOCAL LOGIN
+   ========================================================= */
 
 const LS_USERS = "hujra_users";
 const LS_SESSION = "hujra_session";
 
+
 function $(id) {
-return document.getElementById(id);
+  return document.getElementById(id);
 }
+
 
 function getUsers() {
-try {
-return JSON.parse(localStorage.getItem(LS_USERS) || "[]");
-} catch (e) {
-return [];
+  try {
+    return JSON.parse(
+      localStorage.getItem(LS_USERS) || "[]"
+    );
+  } catch (e) {
+    console.error("Users error:", e);
+    return [];
+  }
 }
-}
+
 
 function saveUsers(users) {
-localStorage.setItem(LS_USERS, JSON.stringify(users));
+  localStorage.setItem(
+    LS_USERS,
+    JSON.stringify(users)
+  );
 }
+
 
 function getSession() {
-return localStorage.getItem(LS_SESSION);
+  return localStorage.getItem(LS_SESSION);
 }
+
 
 function setSession(email) {
-localStorage.setItem(LS_SESSION, email);
+  localStorage.setItem(
+    LS_SESSION,
+    email
+  );
 }
+
 
 function clearSession() {
-localStorage.removeItem(LS_SESSION);
+  localStorage.removeItem(
+    LS_SESSION
+  );
 }
+
 
 function findUser(email) {
-if (!email) return null;
 
-return getUsers().find(
-user =>
-user.email &&
-user.email.toLowerCase() === email.toLowerCase()
-);
+  if (!email) {
+    return null;
+  }
+
+  return getUsers().find(
+    user =>
+      user.email &&
+      user.email.toLowerCase() ===
+      email.toLowerCase()
+  );
 }
 
-/* ---------- HELPERS ---------- */
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
 
 function initials(name) {
-return (name || "?").trim().slice(0, 1).toUpperCase();
+
+  return (name || "?")
+    .trim()
+    .slice(0, 1)
+    .toUpperCase();
+
 }
+
 
 function timeAgo(dateValue) {
-const timestamp = new Date(dateValue).getTime();
 
-if (!timestamp) return "";
+  const timestamp =
+    new Date(dateValue).getTime();
 
-const diff = Math.floor((Date.now() - timestamp) / 1000);
+  if (!timestamp) {
+    return "";
+  }
 
-if (diff < 60) return "همدا اوس";
+  const diff =
+    Math.floor(
+      (Date.now() - timestamp) / 1000
+    );
 
-if (diff < 3600) {
-return ${Math.floor(diff / 60)} دقیقې مخکې;
+  if (diff < 60) {
+    return "همدا اوس";
+  }
+
+  if (diff < 3600) {
+
+    return `${Math.floor(
+      diff / 60
+    )} دقیقې مخکې`;
+
+  }
+
+  if (diff < 86400) {
+
+    return `${Math.floor(
+      diff / 3600
+    )} ساعته مخکې`;
+
+  }
+
+  return `${Math.floor(
+    diff / 86400
+  )} ورځې مخکې`;
+
 }
 
-if (diff < 86400) {
-return ${Math.floor(diff / 3600)} ساعته مخکې;
-}
-
-return ${Math.floor(diff / 86400)} ورځې مخکې;
-}
 
 function escapeHtml(str) {
-const div = document.createElement("div");
-div.textContent = str || "";
-return div.innerHTML;
+
+  const div =
+    document.createElement("div");
+
+  div.textContent = str || "";
+
+  return div.innerHTML;
+
 }
 
-/* ---------- VIEW SWITCHING ---------- */
+
+/* =========================================================
+   VIEW SWITCHING
+   ========================================================= */
 
 function showAuth() {
-$("authView").classList.remove("hidden");
-$("feedView").classList.add("hidden");
-$("profileView").classList.add("hidden");
+
+  $("authView")
+    .classList
+    .remove("hidden");
+
+  $("feedView")
+    .classList
+    .add("hidden");
+
+  $("profileView")
+    .classList
+    .add("hidden");
+
 }
+
 
 function showFeed() {
-$("authView").classList.add("hidden");
-$("feedView").classList.remove("hidden");
-$("profileView").classList.add("hidden");
 
-renderFeed();
+  $("authView")
+    .classList
+    .add("hidden");
+
+  $("feedView")
+    .classList
+    .remove("hidden");
+
+  $("profileView")
+    .classList
+    .add("hidden");
+
+  renderFeed();
+
 }
+
 
 function showProfile() {
-$("authView").classList.add("hidden");
-$("feedView").classList.add("hidden");
-$("profileView").classList.remove("hidden");
 
-renderProfile();
-}
+  $("authView")
+    .classList
+    .add("hidden");
 
-/* ---------- AUTH TABS ---------- */
+  $("feedView")
+    .classList
+    .add("hidden");
 
-document.querySelectorAll(".tab-btn").forEach(btn => {
-btn.addEventListener("click", () => {
+  $("profileView")
+    .classList
+    .remove("hidden");
 
-document  
-  .querySelectorAll(".tab-btn")  
-  .forEach(b => b.classList.remove("active"));  
-
-document  
-  .querySelectorAll(".auth-form")  
-  .forEach(form => form.classList.remove("active"));  
-
-btn.classList.add("active");  
-
-const form = $(btn.dataset.tab + "Form");  
-
-if (form) {  
-  form.classList.add("active");  
-}
-
-});
-});
-
-/* ---------- SIGN UP ---------- */
-
-$("signupForm").addEventListener("submit", async (e) => {
-
-e.preventDefault();
-
-const name = $("signupName").value.trim();
-const email = $("signupEmail").value.trim().toLowerCase();
-const password = $("signupPassword").value;
-
-const errorEl = $("signupError");
-
-errorEl.textContent = "";
-
-if (!name || !email || !password) {
-errorEl.textContent = "مهرباني وکړئ ټول معلومات ولیکئ.";
-return;
-}
-
-if (password.length < 4) {
-errorEl.textContent = "پټنوم باید لږ تر لږه ۴ توري ولري.";
-return;
-}
-
-/* Check local account */
-
-if (findUser(email)) {
-errorEl.textContent =
-"دا بریښنالیک مخکې ثبت شوی. ننوتل وکړئ.";
-return;
-}
-
-/* Save local login */
-
-const users = getUsers();
-
-const user = {
-name: name,
-email: email,
-password: password,
-provider: "local"
-};
-
-users.push(user);
-
-saveUsers(users);
-
-/* Create shared profile */
-
-const { error } = await db
-.from("profiles")
-.upsert(
-{
-name: name,
-email: email
-},
-{
-onConflict: "email"
-}
-);
-
-if (error) {
-console.error("Profile error:", error);
-
-errorEl.textContent =  
-  "حساب جوړ شو، خو د سرور سره د نښلولو ستونزه راغله.";  
-
-return;
+  renderProfile();
 
 }
 
-setSession(email);
 
-boot();
-});
+/* =========================================================
+   AUTH TABS
+   ========================================================= */
 
-/* ---------- LOGIN ---------- */
+document
+  .querySelectorAll(".tab-btn")
+  .forEach(btn => {
 
-$("loginForm").addEventListener("submit", async (e) => {
+    btn.addEventListener(
+      "click",
+      () => {
 
-e.preventDefault();
+        document
+          .querySelectorAll(".tab-btn")
+          .forEach(b =>
+            b.classList.remove(
+              "active"
+            )
+          );
 
-const email = $("loginEmail").value.trim().toLowerCase();
-const password = $("loginPassword").value;
+        document
+          .querySelectorAll(".auth-form")
+          .forEach(form =>
+            form.classList.remove(
+              "active"
+            )
+          );
 
-const errorEl = $("loginError");
+        btn.classList.add("active");
 
-errorEl.textContent = "";
+        const form =
+          $(btn.dataset.tab + "Form");
 
-const user = findUser(email);
+        if (form) {
+          form.classList.add(
+            "active"
+          );
+        }
 
-if (!user || user.password !== password) {
+      }
+    );
 
-errorEl.textContent =  
-  "بریښنالیک یا پټنوم سم نه دی.";  
+  });
 
-return;
 
-}
+/* =========================================================
+   SIGN UP
+   ========================================================= */
 
-/* Make sure profile exists in Supabase */
+$("signupForm")
+  .addEventListener(
+    "submit",
+    async e => {
 
-await db
-.from("profiles")
-.upsert(
-{
-name: user.name,
-email: user.email
-},
-{
-onConflict: "email"
-}
-);
+      e.preventDefault();
 
-setSession(user.email);
+      const name =
+        $("signupName")
+          .value
+          .trim();
 
-boot();
-});
+      const email =
+        $("signupEmail")
+          .value
+          .trim()
+          .toLowerCase();
 
-/* ---------- LOGOUT ---------- */
+      const password =
+        $("signupPassword")
+          .value;
+
+      const errorEl =
+        $("signupError");
+
+      errorEl.textContent = "";
+
+      if (!name || !email || !password) {
+
+        errorEl.textContent =
+          "مهرباني وکړئ ټول معلومات ولیکئ.";
+
+        return;
+      }
+
+      if (password.length < 4) {
+
+        errorEl.textContent =
+          "پټنوم باید لږ تر لږه ۴ توري ولري.";
+
+        return;
+      }
+
+      if (findUser(email)) {
+
+        errorEl.textContent =
+          "دا بریښنالیک مخکې ثبت شوی. ننوتل وکړئ.";
+
+        return;
+      }
+
+
+      /* Create local account */
+
+      const users =
+        getUsers();
+
+      const user = {
+
+        name: name,
+
+        email: email,
+
+        password: password,
+
+        provider: "local"
+
+      };
+
+      users.push(user);
+
+      saveUsers(users);
+
+
+      /* Create Supabase profile */
+
+      const {
+        error
+      } = await db
+        .from("profiles")
+        .upsert(
+          {
+            name: name,
+            email: email
+          },
+          {
+            onConflict: "email"
+          }
+        );
+
+
+      if (error) {
+
+        console.error(
+          "Profile error:",
+          error
+        );
+
+        /*
+          Account is still saved locally.
+          Do not destroy the login.
+        */
+
+        setSession(email);
+
+        boot();
+
+        return;
+      }
+
+
+      setSession(email);
+
+      boot();
+
+    }
+  );
+
+
+/* =========================================================
+   LOGIN
+   ========================================================= */
+
+$("loginForm")
+  .addEventListener(
+    "submit",
+    async e => {
+
+      e.preventDefault();
+
+      const email =
+        $("loginEmail")
+          .value
+          .trim()
+          .toLowerCase();
+
+      const password =
+        $("loginPassword")
+          .value;
+
+      const errorEl =
+        $("loginError");
+
+      errorEl.textContent = "";
+
+
+      const user =
+        findUser(email);
+
+
+      if (
+        !user ||
+        user.password !== password
+      ) {
+
+        errorEl.textContent =
+          "بریښنالیک یا پټنوم سم نه دی.";
+
+        return;
+      }
+
+
+      /*
+        Login does NOT depend on Supabase.
+        This prevents Supabase errors
+        from blocking local login.
+      */
+
+      try {
+
+        await db
+          .from("profiles")
+          .upsert(
+            {
+              name: user.name,
+              email: user.email
+            },
+            {
+              onConflict: "email"
+            }
+          );
+
+      } catch (error) {
+
+        console.error(
+          "Profile sync error:",
+          error
+        );
+
+      }
+
+
+      setSession(
+        user.email
+      );
+
+      boot();
+
+    }
+  );
+
+
+/* =========================================================
+   LOGOUT
+   ========================================================= */
 
 function doLogout() {
 
-clearSession();
+  clearSession();
 
-boot();
+  showAuth();
+
 }
 
-$("logoutBtn").addEventListener("click", doLogout);
 
-$("logoutBtn2").addEventListener("click", doLogout);
+$("logoutBtn")
+  .addEventListener(
+    "click",
+    doLogout
+  );
 
-/* ---------- NAVIGATION ---------- */
 
-$("navFeedBtn").addEventListener(
-"click",
-showFeed
-);
+$("logoutBtn2")
+  .addEventListener(
+    "click",
+    doLogout
+  );
 
-$("navProfileBtn").addEventListener(
-"click",
-showProfile
-);
 
-$("navFeedBtn2").addEventListener(
-"click",
-showFeed
-);
-
-$("navProfileBtn2").addEventListener(
-"click",
-showProfile
-);
 /* =========================================================
-EDIT PROFILE
-========================================================= */
+   NAVIGATION
+   ========================================================= */
+
+$("navFeedBtn")
+  .addEventListener(
+    "click",
+    showFeed
+  );
+
+
+$("navProfileBtn")
+  .addEventListener(
+    "click",
+    showProfile
+  );
+
+
+$("navFeedBtn2")
+  .addEventListener(
+    "click",
+    showFeed
+  );
+
+
+$("navProfileBtn2")
+  .addEventListener(
+    "click",
+    showProfile
+  );
+
+
+/* =========================================================
+   EDIT PROFILE
+   ========================================================= */
 
 async function editProfile() {
 
-const email = getSession();
+  const email =
+    getSession();
 
-if (!email) return;
+  if (!email) {
+    return;
+  }
 
-const {
-data: profile,
-error
-} = await db
-.from("profiles")
-.select("*")
-.eq("email", email)
-.maybeSingle();
 
-if (error) {
-console.error("Profile loading error:", error);
-alert("د پروفایل معلومات نه شول لوستل کېدای.");
-return;
+  const {
+    data: profile,
+    error
+  } = await db
+    .from("profiles")
+    .select("*")
+    .eq("email", email)
+    .maybeSingle();
+
+
+  if (error) {
+
+    console.error(
+      "Profile loading error:",
+      error
+    );
+
+  }
+
+
+  const name =
+    prompt(
+      "نوم:",
+      profile?.name || ""
+    );
+
+  if (name === null) {
+    return;
+  }
+
+
+  const username =
+    prompt(
+      "Username (لکه zia_hanafi):",
+      profile?.username || ""
+    );
+
+  if (username === null) {
+    return;
+  }
+
+
+  const bio =
+    prompt(
+      "Bio / لنډه پېژندنه:",
+      profile?.bio || ""
+    );
+
+  if (bio === null) {
+    return;
+  }
+
+
+  const location =
+    prompt(
+      "Location / ځای:",
+      profile?.location || ""
+    );
+
+  if (location === null) {
+    return;
+  }
+
+
+  const profession =
+    prompt(
+      "Profession / دنده:",
+      profile?.profession || ""
+    );
+
+  if (profession === null) {
+    return;
+  }
+
+
+  const education =
+    prompt(
+      "Education / زده کړې:",
+      profile?.education || ""
+    );
+
+  if (education === null) {
+    return;
+  }
+
+
+  const skills =
+    prompt(
+      "Skills / مهارتونه:",
+      profile?.skills || ""
+    );
+
+  if (skills === null) {
+    return;
+  }
+
+
+  const interests =
+    prompt(
+      "Interests / علاقې:",
+      profile?.interests || ""
+    );
+
+  if (interests === null) {
+    return;
+  }
+
+
+  const website =
+    prompt(
+      "Website:",
+      profile?.website || ""
+    );
+
+  if (website === null) {
+    return;
+  }
+
+
+  const {
+    error: saveError
+  } = await db
+    .from("profiles")
+    .update({
+
+      name:
+        name.trim(),
+
+      username:
+        username
+          .trim()
+          .toLowerCase()
+          .replace(
+            /\s+/g,
+            "_"
+          ),
+
+      bio:
+        bio.trim(),
+
+      location:
+        location.trim(),
+
+      profession:
+        profession.trim(),
+
+      education:
+        education.trim(),
+
+      skills:
+        skills.trim(),
+
+      interests:
+        interests.trim(),
+
+      website:
+        website.trim(),
+
+      updated_at:
+        new Date().toISOString()
+
+    })
+    .eq(
+      "email",
+      email
+    );
+
+
+  if (saveError) {
+
+    console.error(
+      "Profile save error:",
+      saveError
+    );
+
+    alert(
+      "پروفایل Save نه شو.\n\n" +
+      saveError.message
+    );
+
+    return;
+  }
+
+
+  /* Update local name */
+
+  const users =
+    getUsers();
+
+  const index =
+    users.findIndex(
+      u =>
+        u.email &&
+        u.email.toLowerCase() ===
+        email.toLowerCase()
+    );
+
+
+  if (index !== -1) {
+
+    users[index].name =
+      name.trim();
+
+    saveUsers(users);
+
+  }
+
+
+  alert(
+    "پروفایل په بریالیتوب سره Save شو."
+  );
+
+
+  await renderProfile();
+
 }
 
-const name =
-prompt(
-"نوم:",
-profile?.name || ""
-);
-
-if (name === null) return;
-
-const username =
-prompt(
-"Username (لکه zia_hanafi):",
-profile?.username || ""
-);
-
-if (username === null) return;
-
-const bio =
-prompt(
-"Bio / لنډه پېژندنه:",
-profile?.bio || ""
-);
-
-if (bio === null) return;
-
-const location =
-prompt(
-"Location / ځای:",
-profile?.location || ""
-);
-
-if (location === null) return;
-
-const profession =
-prompt(
-"Profession / دنده:",
-profile?.profession || ""
-);
-
-if (profession === null) return;
-
-const education =
-prompt(
-"Education / زده کړې:",
-profile?.education || ""
-);
-
-if (education === null) return;
-
-const skills =
-prompt(
-"Skills / مهارتونه:",
-profile?.skills || ""
-);
-
-if (skills === null) return;
-
-const interests =
-prompt(
-"Interests / علاقې:",
-profile?.interests || ""
-);
-
-if (interests === null) return;
-
-const website =
-prompt(
-"Website:",
-profile?.website || ""
-);
-
-if (website === null) return;
-
-const {
-error: saveError
-} = await db
-.from("profiles")
-.update({
-
-name: name.trim(),  
-
-  username:  
-    username  
-      .trim()  
-      .toLowerCase()  
-      .replace(/\s+/g, "_"),  
-
-  bio: bio.trim(),  
-
-  location:  
-    location.trim(),  
-
-  profession:  
-    profession.trim(),  
-
-  education:  
-    education.trim(),  
-
-  skills:  
-    skills.trim(),  
-
-  interests:  
-    interests.trim(),  
-
-  website:  
-    website.trim(),  
-
-  updated_at:  
-    new Date().toISOString()  
-
-})  
-.eq(  
-  "email",  
-  email  
-);
-
-if (saveError) {
-
-console.error(  
-  "Profile save error:",  
-  saveError  
-);  
-
-alert(  
-  "پروفایل Save نه شو. Username ښايي تکراري وي."  
-);  
-
-return;
-
-}
-
-/* Update local user name */
-
-const users = getUsers();
-
-const index =
-users.findIndex(
-u =>
-u.email &&
-u.email.toLowerCase() ===
-email.toLowerCase()
-);
-
-if (index !== -1) {
-
-users[index].name =  
-  name.trim();  
-
-saveUsers(users);
-
-}
-
-alert(
-"پروفایل په بریالیتوب سره Save شو."
-);
-
-await renderProfile();
-}
 
 /* =========================================================
-GOOGLE LOGIN
-========================================================= */
+   GOOGLE LOGIN
+   ========================================================= */
 
 function decodeJwt(token) {
 
-try {
+  try {
 
-const payload = token.split(".")[1];  
+    const payload =
+      token.split(".")[1];
 
-const json = decodeURIComponent(  
-  atob(  
-    payload  
-      .replace(/-/g, "+")  
-      .replace(/_/g, "/")  
-  )  
-    .split("")  
-    .map(  
-      c =>  
-        "%" +  
-        ("00" + c.charCodeAt(0).toString(16)).slice(-2)  
-    )  
-    .join("")  
-);  
+    const json =
+      decodeURIComponent(
+        atob(
+          payload
+            .replace(/-/g, "+")
+            .replace(/_/g, "/")
+        )
+          .split("")
+          .map(
+            c =>
+              "%" +
+              (
+                "00" +
+                c
+                  .charCodeAt(0)
+                  .toString(16)
+              ).slice(-2)
+          )
+          .join("")
+      );
 
-return JSON.parse(json);
+    return JSON.parse(json);
 
-} catch (e) {
+  } catch (e) {
 
-return null;
+    console.error(
+      "JWT error:",
+      e
+    );
 
-}
-}
+    return null;
 
-window.handleGoogleCredential = async function(response) {
-
-const data = decodeJwt(response.credential);
-
-if (!data || !data.email) {
-return;
-}
-
-const email = data.email.toLowerCase();
-
-let user = findUser(email);
-
-if (!user) {
-
-user = {  
-  name:  
-    data.name ||  
-    email.split("@")[0],  
-
-  email: email,  
-
-  password: null,  
-
-  provider: "google"  
-};  
-
-
-const users = getUsers();  
-
-users.push(user);  
-
-saveUsers(users);
+  }
 
 }
 
-/* Save profile to Supabase */
 
-await db
-.from("profiles")
-.upsert(
-{
-name: user.name,
-email: user.email
-},
-{
-onConflict: "email"
-}
-);
+window.handleGoogleCredential =
+  async function(response) {
 
-setSession(user.email);
+    const data =
+      decodeJwt(
+        response.credential
+      );
 
-boot();
-};
+    if (
+      !data ||
+      !data.email
+    ) {
+      return;
+    }
+
+
+    const email =
+      data.email.toLowerCase();
+
+
+    let user =
+      findUser(email);
+
+
+    if (!user) {
+
+      user = {
+
+        name:
+          data.name ||
+          email.split("@")[0],
+
+        email:
+          email,
+
+        password:
+          null,
+
+        provider:
+          "google"
+
+      };
+
+
+      const users =
+        getUsers();
+
+      users.push(user);
+
+      saveUsers(users);
+
+    }
+
+
+    try {
+
+      await db
+        .from("profiles")
+        .upsert(
+          {
+            name: user.name,
+            email: user.email
+          },
+          {
+            onConflict: "email"
+          }
+        );
+
+    } catch (error) {
+
+      console.error(
+        "Google profile error:",
+        error
+      );
+
+    }
+
+
+    setSession(
+      user.email
+    );
+
+    boot();
+
+  };
+
 
 function initGoogleButton() {
 
-if (
-typeof GOOGLE_CLIENT_ID === "undefined" ||
-!GOOGLE_CLIENT_ID ||
-typeof google === "undefined"
-) {
+  if (
+    typeof GOOGLE_CLIENT_ID ===
+      "undefined" ||
+    !GOOGLE_CLIENT_ID ||
+    typeof google ===
+      "undefined"
+  ) {
+    return;
+  }
 
-return;
+
+  google.accounts.id.initialize({
+
+    client_id:
+      GOOGLE_CLIENT_ID,
+
+    callback:
+      window.handleGoogleCredential
+
+  });
+
+
+  google.accounts.id.renderButton(
+    $("googleBtnHolder"),
+    {
+      theme:
+        "filled_black",
+
+      shape:
+        "pill",
+
+      text:
+        "continue_with",
+
+      locale:
+        "en"
+    }
+  );
 
 }
 
-google.accounts.id.initialize({
-
-client_id: GOOGLE_CLIENT_ID,  
-
-callback:  
-  window.handleGoogleCredential
-
-});
-
-google.accounts.id.renderButton(
-$("googleBtnHolder"),
-{
-theme: "filled_black",
-shape: "pill",
-text: "continue_with",
-locale: "en"
-}
-);
-}
 
 /* =========================================================
-IMAGE HANDLING
-========================================================= */
+   IMAGE HANDLING
+   ========================================================= */
 
 let pendingImage = null;
 
-$("imageInput").addEventListener(
-"change",
-e => {
 
-const file = e.target.files[0];  
+$("imageInput")
+  .addEventListener(
+    "change",
+    e => {
 
-if (!file) return;  
+      const file =
+        e.target.files[0];
 
-
-/* Maximum file size */  
-
-if (file.size > 8 * 1024 * 1024) {  
-
-  alert(  
-    "عکس باید له ۸MB څخه کوچنی وي."  
-  );  
-
-  $("imageInput").value = "";  
-
-  return;  
-}  
+      if (!file) {
+        return;
+      }
 
 
-const reader = new FileReader();  
+      if (
+        file.size >
+        8 * 1024 * 1024
+      ) {
+
+        alert(
+          "عکس باید له ۸MB څخه کوچنی وي."
+        );
+
+        $("imageInput").value =
+          "";
+
+        return;
+      }
 
 
-reader.onload = ev => {  
-
-  const img = new Image();  
-
-
-  img.onload = () => {  
-
-    const maxW = 900;  
-
-    const scale =  
-      Math.min(  
-        1,  
-        maxW / img.width  
-      );  
+      const reader =
+        new FileReader();
 
 
-    const canvas =  
-      document.createElement("canvas");  
+      reader.onload =
+        ev => {
+
+          const img =
+            new Image();
 
 
-    canvas.width =  
-      Math.round(img.width * scale);  
+          img.onload =
+            () => {
+
+              const maxW =
+                900;
 
 
-    canvas.height =  
-      Math.round(img.height * scale);  
+              const scale =
+                Math.min(
+                  1,
+                  maxW /
+                    img.width
+                );
 
 
-    const ctx =  
-      canvas.getContext("2d");  
+              const canvas =
+                document.createElement(
+                  "canvas"
+                );
 
 
-    ctx.drawImage(  
-      img,  
-      0,  
-      0,  
-      canvas.width,  
-      canvas.height  
-    );  
+              canvas.width =
+                Math.round(
+                  img.width *
+                    scale
+                );
 
 
-    pendingImage =  
-      canvas.toDataURL(  
-        "image/jpeg",  
-        0.72  
-      );  
+              canvas.height =
+                Math.round(
+                  img.height *
+                    scale
+                );
 
 
-    $("imagePreview").src =  
-      pendingImage;  
+              const ctx =
+                canvas.getContext(
+                  "2d"
+                );
 
 
-    $("imagePreviewWrap")  
-      .classList  
-      .remove("hidden");  
-  };  
+              ctx.drawImage(
+                img,
+                0,
+                0,
+                canvas.width,
+                canvas.height
+              );
 
 
-  img.src = ev.target.result;  
-};  
+              pendingImage =
+                canvas.toDataURL(
+                  "image/jpeg",
+                  0.72
+                );
 
 
-reader.readAsDataURL(file);
+              $("imagePreview")
+                .src =
+                pendingImage;
 
-}
-);
 
-/* ---------- REMOVE IMAGE ---------- */
+              $("imagePreviewWrap")
+                .classList
+                .remove(
+                  "hidden"
+                );
 
-$("removeImageBtn").addEventListener(
-"click",
-() => {
+            };
 
-pendingImage = null;  
 
-$("imageInput").value = "";  
+          img.src =
+            ev.target.result;
 
-$("imagePreviewWrap")  
-  .classList  
-  .add("hidden");
+        };
 
-}
-);
+
+      reader.readAsDataURL(
+        file
+      );
+
+    }
+  );
+
 
 /* =========================================================
-GET POSTS FROM SUPABASE
-========================================================= */
+   REMOVE IMAGE
+   ========================================================= */
+
+$("removeImageBtn")
+  .addEventListener(
+    "click",
+    () => {
+
+      pendingImage =
+        null;
+
+      $("imageInput").value =
+        "";
+
+      $("imagePreviewWrap")
+        .classList
+        .add("hidden");
+
+    }
+  );
+
+
+/* =========================================================
+   GET POSTS
+   ========================================================= */
 
 async function getPosts() {
 
-const {
-data,
-error
-} = await db
-.from("posts")
-.select("*")
-.order(
-"created_at",
-{
-ascending: false
+  const {
+    data,
+    error
+  } = await db
+    .from("posts")
+    .select("*")
+    .order(
+      "created_at",
+      {
+        ascending:
+          false
+      }
+    );
+
+
+  if (error) {
+
+    console.error(
+      "Posts loading error:",
+      error
+    );
+
+    return [];
+
+  }
+
+
+  const postIds =
+    (data || []).map(
+      post =>
+        post.id
+    );
+
+
+  if (
+    postIds.length ===
+    0
+  ) {
+    return [];
+  }
+
+
+  const {
+    data: likes,
+    error: likesError
+  } = await db
+    .from("post_likes")
+    .select(
+      "post_id,email"
+    )
+    .in(
+      "post_id",
+      postIds
+    );
+
+
+  if (likesError) {
+
+    console.error(
+      "Likes loading error:",
+      likesError
+    );
+
+  }
+
+
+  const likesList =
+    likes || [];
+
+
+  return (
+    data || []
+  ).map(
+    post => {
+
+      const postLikes =
+        likesList
+          .filter(
+            like =>
+              like.post_id ===
+              post.id
+          )
+          .map(
+            like =>
+              like.email
+          );
+
+
+      return {
+
+        id:
+          post.id,
+
+        email:
+          post.email,
+
+        name:
+          post.name,
+
+        text:
+          post.text || "",
+
+        image:
+          post.image || null,
+
+        likes:
+          postLikes,
+
+        createdAt:
+          post.created_at
+
+      };
+
+    }
+  );
+
 }
-);
 
-if (error) {
-
-console.error(  
-  "Posts loading error:",  
-  error  
-);  
-
-return [];
-
-}
-
-/* Get likes */
-
-const postIds =
-(data || []).map(
-post => post.id
-);
-
-if (postIds.length === 0) {
-return [];
-}
-
-const {
-data: likes,
-error: likesError
-} = await db
-.from("post_likes")
-.select("post_id,email")
-.in("post_id", postIds);
-
-if (likesError) {
-
-console.error(  
-  "Likes loading error:",  
-  likesError  
-);
-
-}
-
-const likesList =
-likes || [];
-
-return (data || []).map(post => {
-
-const postLikes =  
-  likesList  
-    .filter(  
-      like =>  
-        like.post_id === post.id  
-    )  
-    .map(  
-      like =>  
-        like.email  
-    );  
-
-
-return {  
-  id: post.id,  
-
-  email: post.email,  
-
-  name: post.name,  
-
-  text: post.text || "",  
-
-  image: post.image || null,  
-
-  likes: postLikes,  
-
-  createdAt: post.created_at  
-};
-
-});
-}
 
 /* =========================================================
-CREATE POST
-========================================================= */
+   CREATE POST
+   ========================================================= */
 
-$("submitPostBtn").addEventListener(
-"click",
-async () => {
+$("submitPostBtn")
+  .addEventListener(
+    "click",
+    async () => {
 
-const text =  
-  $("postText").value.trim();  
-
-
-if (!text && !pendingImage) {  
-  return;  
-}  
+      const text =
+        $("postText")
+          .value
+          .trim();
 
 
-const email =  
-  getSession();  
+      if (
+        !text &&
+        !pendingImage
+      ) {
+        return;
+      }
 
 
-const user =  
-  findUser(email);  
+      const email =
+        getSession();
 
 
-if (!user) {  
-
-  alert(  
-    "لومړی باید حساب ته داخل شئ."  
-  );  
-
-  return;  
-}  
+      const user =
+        findUser(email);
 
 
-const button =  
-  $("submitPostBtn");  
+      if (!user) {
+
+        alert(
+          "لومړی باید حساب ته داخل شئ."
+        );
+
+        return;
+      }
 
 
-button.disabled = true;  
-
-button.textContent =  
-  "خپورېږي...";  
+      const button =
+        $("submitPostBtn");
 
 
-try {  
+      button.disabled =
+        true;
 
-  /* Make sure profile exists */  
-
-  const {  
-    data: profile,  
-    error: profileError  
-  } = await db  
-    .from("profiles")  
-    .upsert(  
-      {  
-        name: user.name,  
-        email: user.email  
-      },  
-      {  
-        onConflict: "email"  
-      }  
-    )  
-    .select()  
-    .single();  
+      button.textContent =
+        "خپورېږي...";
 
 
-  if (profileError) {  
+      try {
 
-    console.error(  
-      "Profile error:",  
-      profileError  
-    );  
+        /*
+          Make sure profile exists
+        */
 
-    alert(  
-      "د پروفایل جوړولو ستونزه."  
-    );  
+        const {
+          data: profile,
+          error:
+            profileError
+        } = await db
+          .from("profiles")
+          .upsert(
+            {
+              name:
+                user.name,
 
-    return;  
-  }  
-
-
-  /* Create post */  
-
-  const {  
-    error  
-  } = await db  
-    .from("posts")  
-    .insert({  
-      profile_id:  
-        profile  
-          ? profile.id  
-          : null,  
-
-      name: user.name,  
-
-      email: user.email,  
-
-      text: text,  
-
-      image: pendingImage  
-    });  
+              email:
+                user.email
+            },
+            {
+              onConflict:
+                "email"
+            }
+          )
+          .select()
+          .single();
 
 
-  if (error) {  
+        if (profileError) {
 
-    console.error(  
-      "Post error:",  
-      error  
-    );  
+          console.error(
+            "Profile error:",
+            profileError
+          );
 
-    alert(  
-      "پوسټ خپور نه شو. بیا هڅه وکړئ."  
-    );  
+          /*
+            Do not stop if profile
+            synchronization fails.
+          */
 
-    return;  
-  }  
-
-
-  /* Clear composer */  
-
-  $("postText").value = "";  
-
-  pendingImage = null;  
-
-  $("imageInput").value = "";  
-
-  $("imagePreviewWrap")  
-    .classList  
-    .add("hidden");  
+        }
 
 
-  /* Refresh feed */  
+        /*
+          Create post
+        */
 
-  await renderFeed();  
+        const {
+          error
+        } = await db
+          .from("posts")
+          .insert({
 
-} catch (error) {  
+            profile_id:
+              profile
+                ? profile.id
+                : null,
 
-  console.error(error);  
+            name:
+              user.name,
 
-  alert(  
-    "یوه ستونزه رامنځته شوه."  
-  );  
+            email:
+              user.email,
 
-} finally {  
+            text:
+              text,
 
-  button.disabled = false;  
+            image:
+              pendingImage
 
-  button.textContent =  
-    "خپور کول";  
-}
+          });
 
-}
-);
+
+        if (error) {
+
+          console.error(
+            "Post error:",
+            error
+          );
+
+          alert(
+            "پوسټ خپور نه شو.\n\n" +
+            error.message
+          );
+
+          return;
+        }
+
+
+        /*
+          Clear composer
+        */
+
+        $("postText")
+          .value =
+          "";
+
+        pendingImage =
+          null;
+
+        $("imageInput")
+          .value =
+          "";
+
+        $("imagePreviewWrap")
+          .classList
+          .add(
+            "hidden"
+          );
+
+
+        await renderFeed();
+
+      } catch (error) {
+
+        console.error(
+          error
+        );
+
+        alert(
+          "یوه ستونزه رامنځته شوه.\n\n" +
+          error.message
+        );
+
+      } finally {
+
+        button.disabled =
+          false;
+
+        button.textContent =
+          "خپور کول";
+
+      }
+
+    }
+  );
+
 
 /* =========================================================
-POST CARD
-========================================================= */
+   POST CARD
+   ========================================================= */
 
 function postCardHtml(
-post,
-currentEmail
+  post,
+  currentEmail
 ) {
 
-const liked =
-post.likes.includes(
-currentEmail
-);
-
-return `
-<article  
-class="post-card"  
-data-id="${post.id}"  
->
-
-<div class="post-head">  
-
-    <div class="avatar">  
-      ${escapeHtml(  
-        initials(post.name)  
-      )}  
-    </div>  
-
-    <div>  
-
-      <div class="post-author">  
-        ${escapeHtml(  
-          post.name  
-        )}  
-      </div>  
-
-      <div class="post-time">  
-        ${timeAgo(  
-          post.createdAt  
-        )}  
-      </div>  
-
-    </div>  
-
-  </div>  
+  const liked =
+    post.likes.includes(
+      currentEmail
+    );
 
 
-  ${  
-    post.text  
-      ? `  
-        <div class="post-text">  
-          ${escapeHtml(  
-            post.text  
-          )}  
-        </div>  
-      `  
-      : ""  
-  }  
+  const isOwner =
+    post.email &&
+    currentEmail &&
+    post.email.toLowerCase() ===
+      currentEmail.toLowerCase();
 
 
-  ${  
-    post.image  
-      ? `  
-        <img  
-          class="post-image"  
-          src="${post.image}"  
-          alt="عکس"  
-          loading="lazy"  
-        >  
-      `  
-      : ""  
-  }  
+  return `
+
+    <article
+      class="post-card"
+      data-id="${post.id}"
+    >
+
+      <div class="post-head">
+
+        <div class="avatar">
+          ${escapeHtml(
+            initials(post.name)
+          )}
+        </div>
+
+        <div>
+
+          <div class="post-author">
+            ${escapeHtml(
+              post.name
+            )}
+          </div>
+
+          <div class="post-time">
+            ${timeAgo(
+              post.createdAt
+            )}
+          </div>
+
+        </div>
+
+      </div>
 
 
-  <div class="post-foot">
+      ${
+        post.text
+          ? `
+            <div class="post-text">
+              ${escapeHtml(
+                post.text
+              )}
+            </div>
+          `
+          : ""
+      }
 
-${
-post.email &&
-currentEmail &&
-post.email.toLowerCase() === currentEmail.toLowerCase()
-?   <button   class="edit-post-btn"   data-id="${post.id}"   type="button"   >   ✏️ سمول   </button>  
-: ""
-}
-<button
-class="like-btn ${
-liked
-? "liked"
-: ""
-}"
-data-id="${post.id}"
->
 
-<span class="flame">  
-        🔥  
-      </span>  
+      ${
+        post.image
+          ? `
+            <img
+              class="post-image"
+              src="${post.image}"
+              alt="عکس"
+              loading="lazy"
+            >
+          `
+          : ""
+      }
 
-      <span class="like-count">  
-        ${post.likes.length}  
-      </span>  
 
-      <span>  
-        ${  
-          liked  
-            ? "خوښ شو"  
-            : "خوښول"  
-        }  
-      </span>  
+      <div class="post-foot">
 
-    </button>  
+        ${
+          isOwner
+            ? `
+              <button
+                class="edit-post-btn"
+                data-id="${post.id}"
+                type="button"
+              >
+                ✏️ سمول
+              </button>
+            `
+            : ""
+        }
 
-  </div>  
 
-</article>
+        <button
+          class="like-btn ${
+            liked
+              ? "liked"
+              : ""
+          }"
+          data-id="${post.id}"
+          type="button"
+        >
 
-`;
-}
+          <span class="flame">
+            🔥
+          </span>
 
-function attachEditHandlers(container) {
+          <span class="like-count">
+            ${post.likes.length}
+          </span>
 
-container
-.querySelectorAll(".edit-post-btn")
-.forEach(btn => {
+          <span>
+            ${
+              liked
+                ? "خوښ شو"
+                : "خوښول"
+            }
+          </span>
 
-btn.addEventListener(  
-    "click",  
-    async () => {  
+        </button>
 
-      const postId = btn.dataset.id;  
+      </div>
 
-      await editPost(postId);  
+    </article>
 
-    }  
-  );  
-
-});
+  `;
 
 }
+
+
 /* =========================================================
-LIKE
-========================================================= */
+   EDIT POST HANDLERS
+   ========================================================= */
+
+function attachEditHandlers(
+  container
+) {
+
+  container
+    .querySelectorAll(
+      ".edit-post-btn"
+    )
+    .forEach(btn => {
+
+      btn.addEventListener(
+        "click",
+        async () => {
+
+          const postId =
+            btn.dataset.id;
+
+          await editPost(
+            postId
+          );
+
+        }
+      );
+
+    });
+
+}
+
+
+/* =========================================================
+   EDIT POST
+   ========================================================= */
+
+async function editPost(
+  postId
+) {
+
+  const email =
+    getSession();
+
+
+  if (!email) {
+
+    alert(
+      "لومړی Login وکړئ."
+    );
+
+    return;
+  }
+
+
+  /*
+    Get current post
+  */
+
+  const {
+    data: post,
+    error:
+      loadError
+  } = await db
+    .from("posts")
+    .select("*")
+    .eq(
+      "id",
+      postId
+    )
+    .maybeSingle();
+
+
+  if (loadError) {
+
+    console.error(
+      "Post loading error:",
+      loadError
+    );
+
+    alert(
+      "پوسټ ونه لوستل شو.\n\n" +
+      loadError.message
+    );
+
+    return;
+  }
+
+
+  if (!post) {
+
+    alert(
+      "پوسټ پیدا نه شو."
+    );
+
+    return;
+  }
+
+
+  /*
+    Only owner can edit
+  */
+
+  if (
+    !post.email ||
+    post.email.toLowerCase() !==
+      email.toLowerCase()
+  ) {
+
+    alert(
+      "تاسو د دې پوسټ د Edit اجازه نه لرئ."
+    );
+
+    return;
+  }
+
+
+  /*
+    New text
+  */
+
+  const newText =
+    prompt(
+      "د پوسټ نوی متن ولیکئ:",
+      post.text || ""
+    );
+
+
+  if (
+    newText ===
+    null
+  ) {
+    return;
+  }
+
+
+  const cleanText =
+    newText.trim();
+
+
+  if (
+    !cleanText &&
+    !post.image
+  ) {
+
+    alert(
+      "پوسټ تش نه شي پاتې کېدای."
+    );
+
+    return;
+  }
+
+
+  /*
+    Update Supabase
+  */
+
+  const {
+    error:
+      updateError
+  } = await db
+    .from("posts")
+    .update({
+
+      text:
+        cleanText,
+
+      updated_at:
+        new Date().toISOString()
+
+    })
+    .eq(
+      "id",
+      postId
+    )
+    .eq(
+      "email",
+      email
+    );
+
+
+  if (updateError) {
+
+    console.error(
+      "Post update error:",
+      updateError
+    );
+
+    alert(
+      "پوسټ Save نه شو.\n\n" +
+      updateError.message
+    );
+
+    return;
+  }
+
+
+  alert(
+    "پوسټ په بریالیتوب سره Save شو."
+  );
+
+
+  await renderFeed();
+
+
+  if (
+    !$("profileView")
+      .classList
+      .contains(
+        "hidden"
+      )
+  ) {
+
+    await renderProfile();
+
+  }
+
+}
+
+
+/* =========================================================
+   LIKE
+   ========================================================= */
 
 function attachLikeHandlers(
-container
+  container
 ) {
 
-container
-.querySelectorAll(
-".like-btn"
-)
-.forEach(btn => {
+  container
+    .querySelectorAll(
+      ".like-btn"
+    )
+    .forEach(btn => {
 
-btn.addEventListener(  
-    "click",  
-    async () => {  
+      btn.addEventListener(
+        "click",
+        async () => {
 
-      const postId =  
-        btn.dataset.id;  
-
-
-      const email =  
-        getSession();  
+          const postId =
+            btn.dataset.id;
 
 
-      if (!email) {  
-        return;  
-      }  
+          const email =
+            getSession();
 
 
-      btn.disabled = true;  
+          if (!email) {
+            return;
+          }
 
 
-      try {  
-
-        /* Check if already liked */  
-
-        const {  
-          data: existing,  
-          error: checkError  
-        } = await db  
-          .from("post_likes")  
-          .select("id")  
-          .eq(  
-            "post_id",  
-            postId  
-          )  
-          .eq(  
-            "email",  
-            email  
-          )  
-          .maybeSingle();  
+          btn.disabled =
+            true;
 
 
-        if (checkError) {  
+          try {
 
-          console.error(  
-            checkError  
-          );  
-
-          return;  
-        }  
-
-
-        if (existing) {  
-
-          /* Remove like */  
-
-          const {  
-            error  
-          } = await db  
-            .from("post_likes")  
-            .delete()  
-            .eq(  
-              "id",  
-              existing.id  
-            );  
+            const {
+              data: existing,
+              error:
+                checkError
+            } = await db
+              .from("post_likes")
+              .select("id")
+              .eq(
+                "post_id",
+                postId
+              )
+              .eq(
+                "email",
+                email
+              )
+              .maybeSingle();
 
 
-          if (error) {  
+            if (checkError) {
 
-            console.error(  
-              "Unlike error:",  
-              error  
-            );  
+              console.error(
+                checkError
+              );
 
-            return;  
-          }  
-
-        } else {  
-
-          /* Add like */  
-
-          const {  
-            error  
-          } = await db  
-            .from("post_likes")  
-            .insert({  
-              post_id:  
-                postId,  
-
-              email:  
-                email  
-            });  
+              return;
+            }
 
 
-          if (error) {  
+            if (existing) {
 
-            console.error(  
-              "Like error:",  
-              error  
-            );  
+              /*
+                Remove like
+              */
 
-            return;  
-          }  
-        }  
+              const {
+                error
+              } = await db
+                .from(
+                  "post_likes"
+                )
+                .delete()
+                .eq(
+                  "id",
+                  existing.id
+                );
 
 
-        await renderFeed();  
+              if (error) {
+
+                console.error(
+                  "Unlike error:",
+                  error
+                );
+
+                return;
+              }
+
+            } else {
+
+              /*
+                Add like
+              */
+
+              const {
+                error
+              } = await db
+                .from(
+                  "post_likes"
+                )
+                .insert({
+
+                  post_id:
+                    postId,
+
+                  email:
+                    email
+
+                });
 
 
-        if (  
-          !$(  
-            "profileView"  
-          ).classList.contains(  
-            "hidden"  
-          )  
-        ) {  
+              if (error) {
 
-          await renderProfile();  
-        }  
+                console.error(
+                  "Like error:",
+                  error
+                );
 
-      } finally {  
+                return;
+              }
 
-        btn.disabled =  
-          false;  
-      }  
-    }  
-  );  
-});
+            }
+
+
+            await renderFeed();
+
+
+            if (
+              !$("profileView")
+                .classList
+                .contains(
+                  "hidden"
+                )
+            ) {
+
+              await renderProfile();
+
+            }
+
+          } finally {
+
+            btn.disabled =
+              false;
+
+          }
+
+        }
+      );
+
+    });
 
 }
 
+
 /* =========================================================
-RENDER FEED
-========================================================= */
+   RENDER FEED
+   ========================================================= */
 
 async function renderFeed() {
 
-const email =
-getSession();
+  const email =
+    getSession();
 
-const user =
-findUser(email);
 
-if (!user) {
-showAuth();
-return;
+  const user =
+    findUser(email);
+
+
+  if (!user) {
+
+    showAuth();
+
+    return;
+  }
+
+
+  $("topUserName")
+    .textContent =
+    user.name;
+
+
+  $("composerAvatar")
+    .textContent =
+    initials(
+      user.name
+    );
+
+
+  const listEl =
+    $("feedList");
+
+
+  listEl.innerHTML =
+    `<p class="empty-msg">
+      پوسټونه لوډ کېږي...
+    </p>`;
+
+
+  const posts =
+    await getPosts();
+
+
+  if (
+    posts.length ===
+    0
+  ) {
+
+    listEl.innerHTML =
+      "";
+
+  } else {
+
+    listEl.innerHTML =
+      posts
+        .map(
+          post =>
+            postCardHtml(
+              post,
+              email
+            )
+        )
+        .join("");
+
+  }
+
+
+  $("emptyFeedMsg")
+    .classList
+    .toggle(
+      "hidden",
+      posts.length > 0
+    );
+
+
+  attachLikeHandlers(
+    listEl
+  );
+
+
+  attachEditHandlers(
+    listEl
+  );
+
 }
 
-$("topUserName").textContent =
-user.name;
-
-$("composerAvatar").textContent =
-initials(user.name);
-
-const listEl =
-$("feedList");
-
-listEl.innerHTML =
-<p class="empty-msg">پوسټونه لوډ کېږي...</p>;
-
-const posts =
-await getPosts();
-
-if (posts.length === 0) {
-
-listEl.innerHTML = "";
-
-} else {
-
-listEl.innerHTML =  
-  posts  
-    .map(  
-      post =>  
-        postCardHtml(  
-          post,  
-          email  
-        )  
-    )  
-    .join("");
-
-}
-
-$("emptyFeedMsg")
-.classList
-.toggle(
-"hidden",
-posts.length > 0
-);
-
-attachLikeHandlers(
-listEl
-);
-}
 
 /* =========================================================
-RENDER PROFILE
-========================================================= */
-
-/* =========================================================
-RENDER PROFILE
-========================================================= */
+   RENDER PROFILE
+   ========================================================= */
 
 async function renderProfile() {
 
-const email = getSession();
+  const email =
+    getSession();
 
-const user = findUser(email);
 
-if (!user) {
-showAuth();
-return;
+  const user =
+    findUser(email);
+
+
+  if (!user) {
+
+    showAuth();
+
+    return;
+  }
+
+
+  const {
+    data: profile,
+    error
+  } = await db
+    .from("profiles")
+    .select("*")
+    .eq(
+      "email",
+      email
+    )
+    .maybeSingle();
+
+
+  if (error) {
+
+    console.error(
+      "Profile loading error:",
+      error
+    );
+
+  }
+
+
+  const profileData =
+    profile || {
+
+      name:
+        user.name,
+
+      email:
+        user.email
+
+    };
+
+
+  $("topUserName2")
+    .textContent =
+    profileData.name ||
+    user.name;
+
+
+  $("profileAvatar")
+    .textContent =
+    initials(
+      profileData.name ||
+      user.name
+    );
+
+
+  $("profileName")
+    .textContent =
+    profileData.name ||
+    user.name;
+
+
+  $("profileEmail")
+    .textContent =
+    profileData.email ||
+    user.email;
+
+
+  $("profileUsername")
+    .textContent =
+    profileData.username
+      ? "@" +
+        profileData.username
+      : "";
+
+
+  $("profileBio")
+    .textContent =
+    profileData.bio ||
+    "";
+
+
+  $("profileLocation")
+    .textContent =
+    profileData.location ||
+    "";
+
+
+  $("profileProfession")
+    .textContent =
+    profileData.profession ||
+    "";
+
+
+  $("profileEducation")
+    .textContent =
+    profileData.education ||
+    "";
+
+
+  $("profileSkills")
+    .textContent =
+    profileData.skills ||
+    "";
+
+
+  $("profileInterests")
+    .textContent =
+    profileData.interests ||
+    "";
+
+
+  $("profileWebsite")
+    .textContent =
+    profileData.website ||
+    "";
+
+
+  /*
+    User posts
+  */
+
+  const listEl =
+    $("profileList");
+
+
+  listEl.innerHTML =
+    `<p class="empty-msg">
+      پوسټونه لوډ کېږي...
+    </p>`;
+
+
+  const allPosts =
+    await getPosts();
+
+
+  const posts =
+    allPosts.filter(
+      post =>
+        post.email &&
+        post.email.toLowerCase() ===
+        email.toLowerCase()
+    );
+
+
+  if (
+    posts.length ===
+    0
+  ) {
+
+    listEl.innerHTML =
+      "";
+
+  } else {
+
+    listEl.innerHTML =
+      posts
+        .map(
+          post =>
+            postCardHtml(
+              post,
+              email
+            )
+        )
+        .join("");
+
+  }
+
+
+  $("emptyProfileMsg")
+    .classList
+    .toggle(
+      "hidden",
+      posts.length > 0
+    );
+
+
+  attachLikeHandlers(
+    listEl
+  );
+
+
+  attachEditHandlers(
+    listEl
+  );
+
 }
 
-/* Get profile from Supabase */
 
-const {
-data: profile,
-error
-} = await db
-.from("profiles")
-.select("*")
-.eq("email", email)
-.maybeSingle();
-
-if (error) {
-console.error("Profile loading error:", error);
-}
-
-/* Use Supabase profile if available */
-
-const profileData = profile || {
-name: user.name,
-email: user.email
-};
-
-$("topUserName2").textContent =
-profileData.name || user.name;
-
-$("profileAvatar").textContent =
-initials(profileData.name || user.name);
-
-$("profileName").textContent =
-profileData.name || user.name;
-
-$("profileEmail").textContent =
-profileData.email || user.email;
-
-$("profileUsername").textContent =
-profileData.username
-? "@" + profileData.username
-: "";
-
-$("profileBio").textContent =
-profileData.bio || "";
-
-$("profileLocation").textContent =
-profileData.location || "";
-
-$("profileProfession").textContent =
-profileData.profession || "";
-
-$("profileEducation").textContent =
-profileData.education || "";
-
-$("profileSkills").textContent =
-profileData.skills || "";
-
-$("profileInterests").textContent =
-profileData.interests || "";
-
-$("profileWebsite").textContent =
-profileData.website || "";
-/* Load user's posts */
-
-const listEl = $("profileList");
-
-listEl.innerHTML =
-<p class="empty-msg">پوسټونه لوډ کېږي...</p>;
-
-const allPosts = await getPosts();
-
-const posts = allPosts.filter(
-post =>
-post.email &&
-post.email.toLowerCase() ===
-email.toLowerCase()
-);
-
-if (posts.length === 0) {
-
-listEl.innerHTML = "";
-
-} else {
-
-listEl.innerHTML =  
-  posts  
-    .map(  
-      post =>  
-        postCardHtml(  
-          post,  
-          email  
-        )  
-    )  
-    .join("");
-
-}
-
-$("emptyProfileMsg")
-.classList
-.toggle(
-"hidden",
-posts.length > 0
-);
-
-attachLikeHandlers(listEl);
-}
 /* =========================================================
-AUTO REFRESH
-========================================================= */
+   AUTO REFRESH
+   ========================================================= */
 
-/*
-Every 10 seconds the feed checks Supabase
-so users can see new posts without refreshing.
-*/
+let refreshTimer =
+  null;
 
-let refreshTimer = null;
 
 function startAutoRefresh() {
 
-if (refreshTimer) {
-clearInterval(
-refreshTimer
-);
+  if (refreshTimer) {
+
+    clearInterval(
+      refreshTimer
+    );
+
+  }
+
+
+  refreshTimer =
+    setInterval(
+      async () => {
+
+        const feedVisible =
+          !$("feedView")
+            .classList
+            .contains(
+              "hidden"
+            );
+
+
+        if (
+          feedVisible
+        ) {
+
+          await renderFeed();
+
+        }
+
+      },
+      10000
+    );
+
 }
 
-refreshTimer =
-setInterval(
-async () => {
-
-const feedVisible =  
-      !$(  
-        "feedView"  
-      ).classList.contains(  
-        "hidden"  
-      );  
-
-
-    if (feedVisible) {  
-      await renderFeed();  
-    }  
-
-  },  
-  10000  
-);
-
-}
 
 /* =========================================================
-BOOT
-========================================================= */
+   BOOT
+   ========================================================= */
 
 function boot() {
 
-const email =
-getSession();
+  const email =
+    getSession();
 
-const user =
-findUser(email);
 
-if (
-email &&
-user
-) {
+  const user =
+    findUser(email);
 
-showFeed();
 
-} else {
+  if (
+    email &&
+    user
+  ) {
 
-clearSession();  
+    showFeed();
 
-showAuth();
+  } else {
+
+    clearSession();
+
+    showAuth();
+
+  }
 
 }
-}
+
 
 /* =========================================================
-START APP
-========================================================= */
+   START APP
+   ========================================================= */
 
 initGoogleButton();
+
+startAutoRefresh();
 
 boot();
