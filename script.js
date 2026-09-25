@@ -507,13 +507,6 @@ async function editProfile() {
 }
 
 
-/* Edit Profile button */
-
-$("editProfileBtn").addEventListener(
-  "click",
-  editProfile
-);
-
 /* =========================================================
    GOOGLE LOGIN
    ========================================================= */
