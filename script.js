@@ -321,7 +321,198 @@ $("navProfileBtn2").addEventListener(
   "click",
   showProfile
 );
+/* =========================================================
+   EDIT PROFILE
+   ========================================================= */
 
+async function editProfile() {
+
+  const email = getSession();
+
+  if (!email) return;
+
+  const {
+    data: profile,
+    error
+  } = await db
+    .from("profiles")
+    .select("*")
+    .eq("email", email)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Profile loading error:", error);
+    alert("د پروفایل معلومات نه شول لوستل کېدای.");
+    return;
+  }
+
+  const name =
+    prompt(
+      "نوم:",
+      profile?.name || ""
+    );
+
+  if (name === null) return;
+
+  const username =
+    prompt(
+      "Username (لکه zia_hanafi):",
+      profile?.username || ""
+    );
+
+  if (username === null) return;
+
+  const bio =
+    prompt(
+      "Bio / لنډه پېژندنه:",
+      profile?.bio || ""
+    );
+
+  if (bio === null) return;
+
+  const location =
+    prompt(
+      "Location / ځای:",
+      profile?.location || ""
+    );
+
+  if (location === null) return;
+
+  const profession =
+    prompt(
+      "Profession / دنده:",
+      profile?.profession || ""
+    );
+
+  if (profession === null) return;
+
+  const education =
+    prompt(
+      "Education / زده کړې:",
+      profile?.education || ""
+    );
+
+  if (education === null) return;
+
+  const skills =
+    prompt(
+      "Skills / مهارتونه:",
+      profile?.skills || ""
+    );
+
+  if (skills === null) return;
+
+  const interests =
+    prompt(
+      "Interests / علاقې:",
+      profile?.interests || ""
+    );
+
+  if (interests === null) return;
+
+  const website =
+    prompt(
+      "Website:",
+      profile?.website || ""
+    );
+
+  if (website === null) return;
+
+
+  const {
+    error: saveError
+  } = await db
+    .from("profiles")
+    .update({
+
+      name: name.trim(),
+
+      username:
+        username
+          .trim()
+          .toLowerCase()
+          .replace(/\s+/g, "_"),
+
+      bio: bio.trim(),
+
+      location:
+        location.trim(),
+
+      profession:
+        profession.trim(),
+
+      education:
+        education.trim(),
+
+      skills:
+        skills.trim(),
+
+      interests:
+        interests.trim(),
+
+      website:
+        website.trim(),
+
+      updated_at:
+        new Date().toISOString()
+
+    })
+    .eq(
+      "email",
+      email
+    );
+
+
+  if (saveError) {
+
+    console.error(
+      "Profile save error:",
+      saveError
+    );
+
+    alert(
+      "پروفایل Save نه شو. Username ښايي تکراري وي."
+    );
+
+    return;
+  }
+
+
+  /* Update local user name */
+
+  const users = getUsers();
+
+  const index =
+    users.findIndex(
+      u =>
+        u.email &&
+        u.email.toLowerCase() ===
+        email.toLowerCase()
+    );
+
+  if (index !== -1) {
+
+    users[index].name =
+      name.trim();
+
+    saveUsers(users);
+  }
+
+
+  alert(
+    "پروفایل په بریالیتوب سره Save شو."
+  );
+
+  await renderProfile();
+}
+
+
+/* Edit Profile button */
+
+$("editProfileBtn").addEventListener(
+  "click",
+  editProfile
+);
 
 /* =========================================================
    GOOGLE LOGIN
