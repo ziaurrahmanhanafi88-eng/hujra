@@ -1384,7 +1384,31 @@ async function renderProfile() {
   $("profileEmail").textContent =
     profileData.email || user.email;
 
+  $("profileUsername").textContent =
+    profileData.username
+      ? "@" + profileData.username
+      : "";
 
+  $("profileBio").textContent =
+    profileData.bio || "";
+
+  $("profileLocation").textContent =
+    profileData.location || "";
+
+  $("profileProfession").textContent =
+    profileData.profession || "";
+
+  $("profileEducation").textContent =
+    profileData.education || "";
+
+  $("profileSkills").textContent =
+    profileData.skills || "";
+
+  $("profileInterests").textContent =
+    profileData.interests || "";
+
+  $("profileWebsite").textContent =
+    profileData.website || "";
   /* Load user's posts */
 
   const listEl = $("profileList");
