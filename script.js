@@ -1002,118 +1002,91 @@ $("submitPostBtn").addEventListener(
   }
 );
 
-
 /* =========================================================
-   POST CARD
+   EDIT POST
    ========================================================= */
 
-function postCardHtml(
-  post,
-  currentEmail
-) {
+async function editPost(postId) {
 
-  const liked =
-    post.likes.includes(
-      currentEmail
+  const email = getSession();
+
+  if (!email) return;
+
+  const {
+    data: post,
+    error: loadError
+  } = await db
+    .from("posts")
+    .select("*")
+    .eq("id", postId)
+    .eq("email", email)
+    .maybeSingle();
+
+  if (loadError) {
+    console.error(
+      "Post loading error:",
+      loadError
     );
 
+    alert("پوسټ ونه موندل شو.");
+    return;
+  }
 
-  return `
-    <article
-      class="post-card"
-      data-id="${post.id}"
-    >
+  if (!post) {
+    alert("دا پوسټ ستا نه دی.");
+    return;
+  }
 
-      <div class="post-head">
+  const newText = prompt(
+    "پوسټ سم کړه:",
+    post.text || ""
+  );
 
-        <div class="avatar">
-          ${escapeHtml(
-            initials(post.name)
-          )}
-        </div>
+  if (newText === null) return;
 
-        <div>
+  if (!newText.trim() && !post.image) {
+    alert("پوسټ خالي کېدای نشي.");
+    return;
+  }
 
-          <div class="post-author">
-            ${escapeHtml(
-              post.name
-            )}
-          </div>
+  const {
+    error: updateError
+  } = await db
+    .from("posts")
+    .update({
+      text: newText.trim()
+    })
+    .eq("id", postId)
+    .eq("email", email);
 
-          <div class="post-time">
-            ${timeAgo(
-              post.createdAt
-            )}
-          </div>
+  if (updateError) {
 
-        </div>
+    console.error(
+      "Post update error:",
+      updateError
+    );
 
-      </div>
+    alert(
+      "پوسټ سم نه شو. بیا هڅه وکړئ."
+    );
 
+    return;
+  }
 
-      ${
-        post.text
-          ? `
-            <div class="post-text">
-              ${escapeHtml(
-                post.text
-              )}
-            </div>
-          `
-          : ""
-      }
+  alert(
+    "پوسټ په بریالیتوب سره سم شو. ✅"
+  );
 
+  await renderFeed();
 
-      ${
-        post.image
-          ? `
-            <img
-              class="post-image"
-              src="${post.image}"
-              alt="عکس"
-              loading="lazy"
-            >
-          `
-          : ""
-      }
-
-
-      <div class="post-foot">
-
-        <button
-          class="like-btn ${
-            liked
-              ? "liked"
-              : ""
-          }"
-          data-id="${post.id}"
-        >
-
-          <span class="flame">
-            🔥
-          </span>
-
-          <span class="like-count">
-            ${post.likes.length}
-          </span>
-
-          <span>
-            ${
-              liked
-                ? "خوښ شو"
-                : "خوښول"
-            }
-          </span>
-
-        </button>
-
-      </div>
-
-    </article>
-  `;
+  if (
+    !$("profileView")
+      .classList
+      .contains("hidden")
+  ) {
+    await renderProfile();
+  }
 }
-
-
 /* =========================================================
    LIKE
    ========================================================= */
@@ -1328,6 +1301,9 @@ async function renderFeed() {
   attachLikeHandlers(
     listEl
   );
+   attachEditHandlers(
+  listEl
+);
 }
 
 
