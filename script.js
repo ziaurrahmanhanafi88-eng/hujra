@@ -1101,104 +1101,6 @@ btn.addEventListener(
 
 }
 /* =========================================================
-EDIT POST
-========================================================= */
-
-async function editPost(postId) {
-
-  const email = getSession();
-
-  if (!email) {
-    alert("لومړی باید حساب ته داخل شئ.");
-    return;
-  }
-
-  /* Get the post */
-  const {
-    data: post,
-    error: loadError
-  } = await db
-    .from("posts")
-    .select("*")
-    .eq("id", postId)
-    .maybeSingle();
-
-  if (loadError) {
-    console.error("Post loading error:", loadError);
-    alert("پوسټ ونه لوستل شو.");
-    return;
-  }
-
-  if (!post) {
-    alert("پوسټ پیدا نه شو.");
-    return;
-  }
-
-  /* Security check:
-     Only the owner can edit the post.
-  */
-  if (
-    !post.email ||
-    post.email.toLowerCase() !== email.toLowerCase()
-  ) {
-    alert("تاسو د دې پوسټ د Edit اجازه نه لرئ.");
-    return;
-  }
-
-  /* Ask for new text */
-  const newText = prompt(
-    "د پوسټ نوی متن ولیکئ:",
-    post.text || ""
-  );
-
-  if (newText === null) {
-    return;
-  }
-
-  const cleanText = newText.trim();
-
-  /* Update Supabase */
-  const {
-    error: updateError
-  } = await db
-    .from("posts")
-    .update({
-      text: cleanText,
-      updated_at: new Date().toISOString()
-    })
-    .eq("id", postId)
-    .eq("email", email);
-
-  if (updateError) {
-
-    console.error(
-      "Post update error:",
-      updateError
-    );
-
-    alert(
-      "پوسټ Save نه شو.\n\n" +
-      updateError.message
-    );
-
-    return;
-  }
-
-  alert("پوسټ په بریالیتوب سره Edit او Save شو.");
-
-  /* Reload the feed */
-  await renderFeed();
-
-  /* If profile is visible, reload it too */
-  if (
-    !$("profileView")
-      .classList
-      .contains("hidden")
-  ) {
-    await renderProfile();
-  }
-}
-/* =========================================================
 LIKE
 ========================================================= */
 
@@ -1403,9 +1305,6 @@ posts.length > 0
 attachLikeHandlers(
 listEl
 );
-  attachEditHandlers(
-  listEl
-);
 }
 
 /* =========================================================
@@ -1529,7 +1428,6 @@ posts.length > 0
 );
 
 attachLikeHandlers(listEl);
-  attachLikeHandlers(listEl);
 }
 /* =========================================================
 AUTO REFRESH
