@@ -153,10 +153,64 @@
   </header>
   <main class="feed-main">
     <div class="profile-header">
-      <div class="avatar big" id="profileAvatar"></div>
+
+  <div class="profile-cover" id="profileCover"></div>
+
+  <div class="profile-main-info">
+
+    <div class="avatar big" id="profileAvatar"></div>
+
+    <div class="profile-text-info">
       <h2 id="profileName"></h2>
+
+      <p id="profileUsername" class="profile-username"></p>
+
+      <p id="profileBio" class="profile-bio"></p>
+
       <p id="profileEmail" class="muted"></p>
     </div>
+
+  </div>
+
+  <div class="profile-details" id="profileDetails">
+
+    <div class="profile-detail">
+      <span>📍</span>
+      <span id="profileLocation"></span>
+    </div>
+
+    <div class="profile-detail">
+      <span>💼</span>
+      <span id="profileProfession"></span>
+    </div>
+
+    <div class="profile-detail">
+      <span>🎓</span>
+      <span id="profileEducation"></span>
+    </div>
+
+    <div class="profile-detail">
+      <span>🛠️</span>
+      <span id="profileSkills"></span>
+    </div>
+
+    <div class="profile-detail">
+      <span>❤️</span>
+      <span id="profileInterests"></span>
+    </div>
+
+    <div class="profile-detail">
+      <span>🌐</span>
+      <span id="profileWebsite"></span>
+    </div>
+
+  </div>
+
+  <button id="editProfileBtn" class="btn-primary">
+    ✏️ پروفایل سمول
+  </button>
+
+</div>
     <div class="lattice-divider" aria-hidden="true"></div>
     <div id="profileList" class="feed-list"></div>
     <p id="emptyProfileMsg" class="empty-msg hidden">تاسو تر اوسه هېڅ نظر نه دی خپور کړی.</p>
