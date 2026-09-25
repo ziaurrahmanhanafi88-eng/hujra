@@ -2303,6 +2303,4 @@ function boot() {
 
 initGoogleButton();
 
-startAutoRefresh();
-
 boot();
