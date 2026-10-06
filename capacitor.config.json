@@ -1,0 +1,8 @@
+{
+  "appId": "com.hujra.app",
+  "appName": "HUJRA",
+  "webDir": ".",
+  "server": {
+    "androidScheme": "https"
+  }
+}
